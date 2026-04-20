@@ -17,7 +17,7 @@ Sample POS terminal built with Java Swing.
 - HTML/CSS receipt rendering via `JEditorPane`
 - Persistent transaction logging
 - Modular architecture (model / gui / theme / controller)
-- Custom themed UI (Arcaea-style)
+- Custom themed UI (HSR-inspired)
 
 ## Configuration Details
 To avoid `NullPointerException` errors, you **must** mark the directory containing your images and icons as the **Resources Folder** in your IDE.
