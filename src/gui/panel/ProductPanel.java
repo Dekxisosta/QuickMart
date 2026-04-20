@@ -36,19 +36,7 @@ public class ProductPanel extends JPanel {
 	public void addProduct(String name, double price, int index) {
     	int row = index / 4;
         Color bg = getRowColor(row);
-        int brightness = (int) (0.299 * bg.getRed() +
-                0.587 * bg.getGreen() +
-                0.114 * bg.getBlue());
-        System.out.println(brightness);
-        String html = String.format(
-                "<html><div style='color:%s; width:100px;text-align:center;'>" +
-                        "<b style='font-size:11px;'>%s</b><br>" +
-                        "<span style='font-size:10px;'>₱%.2f</span></div></html>",
-                
-                (brightness<140)? "white": "#6B4226",
-                name, 
-                price
-        );
+        String html = getString(name, price, bg);
 
         JButton pBtn = createStyledButton(bg);
         pBtn.setBorder(new AbstractBorder() {
@@ -74,7 +62,23 @@ public class ProductPanel extends JPanel {
         productGrid.add(pBtn);
     }
 
-	public void addProduct(int index, ImageIcon icon) {
+    private static String getString(String name, double price, Color bg) {
+        int brightness = (int) (0.299 * bg.getRed() +
+                0.587 * bg.getGreen() +
+                0.114 * bg.getBlue());
+        String html = String.format(
+                "<html><div style='color:%s; width:100px;text-align:center;'>" +
+                        "<b style='font-size:11px;'>%s</b><br>" +
+                        "<span style='font-size:10px;'>₱%.2f</span></div></html>",
+
+                (brightness<140)? "white": "#6B4226",
+                name,
+                price
+        );
+        return html;
+    }
+
+    public void addProduct(int index, ImageIcon icon) {
         int row = index / 4;
         Color bg = getRowColor(row);
         JButton pBtn = createStyledButton(bg);

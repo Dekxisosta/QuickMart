@@ -54,8 +54,8 @@ public class LoginFrame extends JFrame {
             String username = userField.getText();
             String password = new String(passField.getPassword());
 
-            if (username.equals("Acheron") && password.equals("hsr1234")) {
-                this.dispose(); // Close login
+            if (username.equals("acheron") && password.equals("hsr1234")) {
+                this.dispose();
                 SwingUtilities.invokeLater(() -> {
                 	posFrame.setVisible(true);
                 });

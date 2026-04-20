@@ -9,13 +9,13 @@ public class ReceiptArchiveService {
 	public void logTransaction(String id, String content) {
         try {
             String projectPath = System.getProperty("user.dir");
-            File logDir = new java.io.File(projectPath, "logs");
+            File logDir = new File(projectPath, "logs");
             
             if (!logDir.exists()) {
                 boolean created = logDir.mkdirs();
                 System.out.println("Logs folder created: " + created);
             }
-            File logFile = new java.io.File(logDir, "trans_" + id + ".html");
+            File logFile = new File(logDir, "trans_" + id + ".html");
             
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile))) {
                 writer.write(content);
