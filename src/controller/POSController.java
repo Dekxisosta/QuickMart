@@ -1,5 +1,7 @@
 package controller;
 
+import listener.*;
+import service.*;
 import gui.frame.POSFrame;
 
 public class POSController {
@@ -10,22 +12,31 @@ public class POSController {
 
     public POSController(
             POSFrame view,
-            CartController cartController,
-            PaymentController paymentController,
-            ReceiptController receiptController,
-            ProductController productController
+            TotalService totalService,
+            TaxService taxService,
+            ReceiptArchiveService receiptArchiveService,
+            DiscountService discountService,
+            ProductService productService
     ) {
-        this.cartController     = cartController;
-        this.paymentController  = paymentController;
-        this.receiptController  = receiptController;
-        this.productController  = productController;
-        initController(view);
+        this.receiptController  = new ReceiptController(view, totalService, taxService, discountService, productService);
+        this.cartController     = new CartController(view, totalService, productService);
+        this.paymentController  = new PaymentController(view, totalService, receiptArchiveService);
+        this.productController  = new ProductController(view, productService);
+        initSubControllers();
+        hookGuiListeners(view);
     }
 
-    private void initController(POSFrame view) {
-        view.cartPanel().getQtyField().addActionListener(_ -> cartController.handleTextFieldEntry());
-        view.cartPanel().getReceivedField().addActionListener(_ -> cartController.refreshTotals());
-        view.cartPanel().getReceivedField().addKeyListener(new java.awt.event.KeyAdapter() {
+    private void initSubControllers(){
+        productController.addProductListener(product -> cartController.addToCart(product));
+        paymentController.setReceiptGenerator(transactionId -> receiptController.generateReceiptHtml(transactionId));
+        paymentController.addPaymentSuccessListener(cartController::clearCart);
+        paymentController.addCashReceivedListener(cartController::refreshTotals);
+    }
+
+    private void hookGuiListeners(POSFrame view) {
+        view.getCartPanel().getQtyField().addActionListener(_ -> cartController.handleTextFieldEntry());
+        view.getCartPanel().getReceivedField().addActionListener(_ -> cartController.refreshTotals());
+        view.getCartPanel().getReceivedField().addKeyListener(new java.awt.event.KeyAdapter() {
             @Override public void keyReleased(java.awt.event.KeyEvent e) { cartController.refreshTotals(); }
         });
 
@@ -40,7 +51,7 @@ public class POSController {
         view.getActionPanel().getPayBtn().addActionListener(_ -> paymentController.handlePayRequest());
 
         view.getTopPanel().getCategoryButtons().forEach(catBtn ->
-                catBtn.addActionListener(_ -> productController.displayCategory(catBtn.getText()))
+            catBtn.addActionListener(_ -> productController.displayCategory(catBtn.getText()))
         );
 
         productController.displayCategory("BEVERAGES");

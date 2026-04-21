@@ -1,7 +1,7 @@
 package model.base;
 
 import javax.swing.ImageIcon;
-import util.BarcodeGenerator;
+import service.BarcodeService;
 
 public abstract class Product {
     private static int idCounter;
@@ -18,7 +18,7 @@ public abstract class Product {
         this.name = name;
         this.price = price;
         this.category = category;
-        this.barcode = BarcodeGenerator.generate(category);
+        this.barcode = BarcodeService.generate(category);
     }
 
     public Product(String name, double price, String category, double discount) {

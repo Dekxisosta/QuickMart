@@ -1,24 +1,24 @@
 package model.base;
 
 public class CartItem {
-    private final String barcode;
-    private final String name;
-    private final int qty;
-    private final double unitPrice;
-    private final boolean voided;
+    private final String BARCODE;
+    private final String NAME;
+    private final int QUANTITY;
+    private final double UNIT_PRICE;
+    private final boolean VOIDED;
 
     public CartItem(String barcode, String name, int qty, double unitPrice, boolean voided) {
-        this.barcode = barcode;
-        this.name = name;
-        this.qty = qty;
-        this.unitPrice = unitPrice;
-        this.voided = voided;
+        this.BARCODE = barcode;
+        this.NAME = name;
+        this.QUANTITY = qty;
+        this.UNIT_PRICE = unitPrice;
+        this.VOIDED = voided;
     }
 
-    public String getBarcode() { return barcode; }
-    public String getName() { return name; }
-    public int getQty() { return qty; }
-    public double getUnitPrice() { return unitPrice; }
-    public double getSubtotal() { return unitPrice * qty; }
-    public boolean isVoided() { return voided; }
+    public String getBarcode() { return BARCODE; }
+    public String getName() { return NAME; }
+    public int getQuantity() { return QUANTITY; }
+    public double getUnitPrice() { return UNIT_PRICE; }
+    public double getSubtotal() { return UNIT_PRICE * QUANTITY; }
+    public boolean isVoided() { return VOIDED; }
 }

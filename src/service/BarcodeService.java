@@ -1,9 +1,9 @@
-package util;
+package service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BarcodeGenerator {
+public class BarcodeService {
     private static int idCounter = 1;
     private static final Map<String, String> CATEGORY_CONFIG = new HashMap<>();
 

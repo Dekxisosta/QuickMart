@@ -9,6 +9,9 @@ Sample POS terminal built with Java Swing.
 ## Preview
 ![Preview](assets/images/preview.png)
 
+## UML Diagram
+![Diagram](assets/images/diagram.png)
+
 ## Key Features
 
 - Secure login (operator authentication)

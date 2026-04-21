@@ -1,8 +1,6 @@
 package gui.panel;
 
 import java.awt.*;
-import java.util.List;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -11,7 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import gui.theme.POSTheme;
-import model.base.*;
 
 @SuppressWarnings("serial")
 public class CartPanel extends JPanel {
@@ -23,31 +20,18 @@ public class CartPanel extends JPanel {
     private JLabel totalLabel;
 
     public CartPanel() {
+        // Configure the main CartPanel (this)
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(500, 0));
         this.setBackground(Color.WHITE);
         this.setBorder(new LineBorder(new Color(222, 226, 230)));
 
+        // Assemble the pieces
         add(createQtySection(), BorderLayout.NORTH);
         add(createTableSection(), BorderLayout.CENTER);
         add(createPaymentSection(), BorderLayout.SOUTH);
     }
 
-    public java.util.List<CartItem> getCartItems() {
-        List<CartItem> items = new ArrayList<>();
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            String barcode = (String) tableModel.getValueAt(i, 0);
-            String name = (String) tableModel.getValueAt(i, 1);
-            int qty = (int) tableModel.getValueAt(i, 2);
-            double unitPrice =
-                    Double.parseDouble(
-                            tableModel.getValueAt(i, 3).toString().replaceAll("[^\\d.]", "")
-                    );
-            boolean voided = "<<VOID>>".equals(tableModel.getValueAt(i, 5));
-            items.add(new CartItem(barcode, name, qty, unitPrice, voided));
-        }
-        return items;
-    }
     private JPanel createQtySection() {
         JPanel qtyPanel = new JPanel(new BorderLayout(10, 5));
         qtyPanel.setBackground(new Color(248, 249, 250));
@@ -99,6 +83,7 @@ public class CartPanel extends JPanel {
 
                 if (isVoid) {
                     c.setForeground(new Color(200, 50, 50));
+                    // Light gray background for voided rows
                     c.setBackground(isSelected ? new Color(180, 180, 180) : new Color(245, 245, 245));
                 } else {
                     c.setForeground(isSelected ? Color.WHITE : POSTheme.COLOR_DARK);
@@ -129,12 +114,14 @@ public class CartPanel extends JPanel {
         paymentPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
         paymentPanel.setBackground(Color.WHITE);
 
+        // TOTAL
         JLabel totalText = new JLabel("TOTAL:");
         totalText.setFont(POSTheme.FONT_BOLD);
 
         totalLabel = new JLabel("₱0.00");
         totalLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
+        // RECEIVED
         JLabel receivedText = new JLabel("RECEIVED:");
         receivedText.setFont(POSTheme.FONT_BOLD);
 
@@ -142,6 +129,7 @@ public class CartPanel extends JPanel {
         receivedField.setFont(new Font("Arial", Font.BOLD, 20));
         receivedField.setHorizontalAlignment(JTextField.RIGHT);
 
+        // CHANGE
         JLabel changeText = new JLabel("CHANGE:");
         changeText.setFont(POSTheme.FONT_BOLD);
 
@@ -167,53 +155,4 @@ public class CartPanel extends JPanel {
     public JTextField getReceivedField() { return receivedField; }
     public JTextField getChangeField() { return changeField; }
     public JLabel getTotalLabel() { return totalLabel; }
-
-    public void clearAndFocusQty() {
-        qtyField.setText("");
-        qtyField.requestFocusInWindow();
-    }
-
-    public String getQtyText() {
-        return qtyField.getText();
-    }
-    public int findActiveRowByBarcode(String barcode) {
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            if (tableModel.getValueAt(i, 0).equals(barcode)
-                    && tableModel.getValueAt(i, 5).equals("")) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public int getRowQty(int row) {
-        return (int) tableModel.getValueAt(row, 2);
-    }
-
-    public void updateRow(int row, int newQty, double finalPrice) {
-        tableModel.setValueAt(newQty, row, 2);
-        tableModel.setValueAt(String.format("₱%.2f", finalPrice * newQty), row, 4);
-    }
-
-    public void addRow(String barcode, String name, int qty, double finalPrice) {
-        tableModel.addRow(new Object[]{
-                barcode,
-                name,
-                qty,
-                String.format("₱%.2f", finalPrice),
-                String.format("₱%.2f", finalPrice * qty),
-                ""
-        });
-    }
-
-    public boolean voidItemByBarcode(String barcode) {
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            if (tableModel.getValueAt(i, 0).equals(barcode)
-                    && tableModel.getValueAt(i, 5).equals("")) {
-                tableModel.setValueAt("<<VOID>>", i, 5);
-                return true;
-            }
-        }
-        return false;
-    }
 }

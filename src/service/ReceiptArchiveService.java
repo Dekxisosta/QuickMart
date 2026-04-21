@@ -6,16 +6,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ReceiptArchiveService {
-	public void logTransaction(String id, String content) {
+	public void archiveReceipt(String id, String content) {
         try {
             String projectPath = System.getProperty("user.dir");
-            File logDir = new File(projectPath, "logs");
+            File logDir = new File(projectPath, "receipts");
             
             if (!logDir.exists()) {
                 boolean created = logDir.mkdirs();
-                System.out.println("Logs folder created: " + created);
+                System.out.println("Receipts folder created: " + created);
             }
-            File logFile = new File(logDir, "trans_" + id + ".html");
+            File logFile = new File(logDir, "rec_" + id + ".html");
             
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile))) {
                 writer.write(content);

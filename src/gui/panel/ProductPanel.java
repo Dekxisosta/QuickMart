@@ -1,6 +1,7 @@
 package gui.panel;
 
 import java.awt.*;
+import java.util.List;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
@@ -8,13 +9,15 @@ import javax.swing.border.EmptyBorder;
 
 import gui.theme.POSTheme;
 import gui.util.AutoHideScrollPane;
+import listener.*;
+import model.base.*;
 
 @SuppressWarnings("serial")
 public class ProductPanel extends JPanel {
     private JPanel productGrid;
     private JScrollPane scroll;
-    private final int COLS = 4;
-    private final int GAP = 12;
+    private static final int COLS = 4;
+    private static final int GAP = 12;
 
     public ProductPanel() {
         setLayout(new BorderLayout());
@@ -33,10 +36,10 @@ public class ProductPanel extends JPanel {
     	productGrid.revalidate();
         productGrid.repaint();
     }
-	public void addProduct(String name, double price, int index) {
+	public void addProductPreview(String name, double price, int index) {
     	int row = index / 4;
         Color bg = getRowColor(row);
-        String html = getString(name, price, bg);
+        String html = getProductHtml(name, price, bg);
 
         JButton pBtn = createStyledButton(bg);
         pBtn.setBorder(new AbstractBorder() {
@@ -61,8 +64,24 @@ public class ProductPanel extends JPanel {
         
         productGrid.add(pBtn);
     }
+    public void displayCategory(List<Product> products, ProductListener listener) {
+        productGrid.removeAll();
+        if (products != null) {
+            for (int i = 0; i < products.size(); i++) {
+                Product p = products.get(i);
+                if (p.getImage() != null) {
+                    addProductPreview(i, p.getImage());
+                } else {
+                    addProductPreview(p.getSimplifiedName(), p.getPrice(), i);
+                }
+                JButton pBtn = (JButton) productGrid.getComponent(i);
+                pBtn.addActionListener(_ -> listener.onProductSelected(p));
+            }
+        }
+        refreshGrid();
+    }
 
-    private static String getString(String name, double price, Color bg) {
+    private String getProductHtml(String name, double price, Color bg) {
         int brightness = (int) (0.299 * bg.getRed() +
                 0.587 * bg.getGreen() +
                 0.114 * bg.getBlue());
@@ -78,7 +97,7 @@ public class ProductPanel extends JPanel {
         return html;
     }
 
-    public void addProduct(int index, ImageIcon icon) {
+    public void addProductPreview(int index, ImageIcon icon) {
         int row = index / 4;
         Color bg = getRowColor(row);
         JButton pBtn = createStyledButton(bg);

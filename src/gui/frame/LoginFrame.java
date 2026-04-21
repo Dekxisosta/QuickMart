@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import gui.theme.POSTheme;
 
 public class LoginFrame extends JFrame {
+    private final POSFrame posFrame;
     public LoginFrame(POSFrame posFrame) {
         setTitle("QUICKMART POS Login");
         setIconImage(POSTheme.ICON);
@@ -15,6 +16,7 @@ public class LoginFrame extends JFrame {
         setSize(350, 480);
         setLocationRelativeTo(null);
         setResizable(false);
+        this.posFrame = posFrame;
 
         JPanel container = new JPanel(new GridBagLayout());
         container.setBackground(POSTheme.COLOR_BG);
