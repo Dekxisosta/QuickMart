@@ -7,6 +7,9 @@
 Sample POS terminal built with Java Swing.
 
 ## Preview
+![Preview](assets/images/preview.gif)
+
+## Screenshot
 ![Preview](assets/images/preview.png)
 
 ## UML Diagram
