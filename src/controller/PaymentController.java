@@ -1,5 +1,6 @@
 package controller;
 
+import handler.*;
 import service.ReceiptArchiveService;
 import service.TotalService;
 import gui.frame.POSFrame;
@@ -12,31 +13,31 @@ public class PaymentController {
     private final POSFrame view;
     private final TotalService totalService;
     private final ReceiptArchiveService receiptArchiveService;
-    private final ReceiptController receiptController;
-    private final CartController cartController;
+    private final ReceiptHandler receiptHandler;
+    private final CartHandler cartHandler;
 
     public PaymentController(
             POSFrame view,
             TotalService totalService,
             ReceiptArchiveService receiptArchiveService,
-            ReceiptController receiptController,
-            CartController cartController
+            ReceiptHandler receiptHandler,
+            CartHandler cartHandler
     ) {
         this.view = view;
         this.totalService = totalService;
         this.receiptArchiveService = receiptArchiveService;
-        this.receiptController = receiptController;
-        this.cartController = cartController;
+        this.receiptHandler = receiptHandler;
+        this.cartHandler = cartHandler;
     }
 
     public void handlePayRequest() {
-        DefaultTableModel model = view.getCartPanel().getTableModel();
+        DefaultTableModel model = view.cartPanel().getTableModel();
         if(model.getRowCount()==0) {
         	view.getDialogService().showMessage(view, "No items in cart");
         	return;
         }
         double total = totalService.getCartTotal(model);
-        String receivedStr = view.getCartPanel().getReceivedField().getText();
+        String receivedStr = view.cartPanel().getReceivedField().getText();
         
         if(receivedStr ==null || receivedStr.isEmpty()) {
         	view.getDialogService().showMessage(view,
@@ -56,12 +57,12 @@ public class PaymentController {
             String transactionID = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
             double change = received - total;
 
-            String receiptHtml = receiptController.generateReceiptHtml(transactionID);
+            String receiptHtml = receiptHandler.generateReceiptHtml(transactionID);
             receiptArchiveService.logTransaction(transactionID, receiptHtml);
 
             view.getDialogService().showSuccessDialog(view, transactionID, total, received, change);
             view.getDialogService().showReceiptDialog(view, receiptHtml);
-            cartController.clearCart();
+            cartHandler.clearCart();
 
         } catch (NumberFormatException e) {
             view.getDialogService().showMessage(view, "Invalid amount entered.");
@@ -69,20 +70,20 @@ public class PaymentController {
     }
 
     public void incrementReceivedField(double amount) {
-        JTextField txtField = view.getCartPanel().getReceivedField();
+        JTextField txtField = view.cartPanel().getReceivedField();
         try {
             double current = txtField.getText().isEmpty() ? 0
                 : Double.parseDouble(txtField.getText().replaceAll("[^\\d.]", ""));
             txtField.setText(String.valueOf(current + amount));
-            cartController.refreshTotals();
+            cartHandler.refreshTotals();
         } catch (NumberFormatException e) {
             txtField.setText("");
         }
     }
 
     public void updateReceivedToExact() {
-        double total = totalService.getCartTotal(view.getCartPanel().getTableModel());
-        view.getCartPanel().getReceivedField().setText("%.2f".formatted(total));
-        cartController.refreshTotals();
+        double total = totalService.getCartTotal(view.cartPanel().getTableModel());
+        view.cartPanel().getReceivedField().setText("%.2f".formatted(total));
+        cartHandler.refreshTotals();
     }
 }

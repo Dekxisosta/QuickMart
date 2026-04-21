@@ -2,7 +2,7 @@ package core;
 
 import javax.swing.SwingUtilities;
 
-import controller.POSController;
+import controller.*;
 import gui.dialog.DialogManager;
 import gui.frame.LoginFrame;
 import gui.frame.POSFrame;
@@ -21,22 +21,27 @@ public class Main {
 	public static void main(String[] args) {
 	    try {
 	    	SwingUtilities.invokeLater(() -> {
-	    		
-		        POSFrame frame = new POSFrame(
+                TotalService totalService = new TotalService();
+                TaxService taxService = new TaxService();
+                DiscountService discountService = new DiscountService();
+                ProductService productService = new ProductService(new ProductRepository());
+                ReceiptArchiveService receiptArchiveService = new ReceiptArchiveService();
+
+                POSFrame frame = new POSFrame(
 		        		new DialogManager(),
 		        		new TopPanel(),
 		        		new ProductPanel(),
 		        		new CartPanel(),
 		        		new ActionPanel()
 	    		);
-		        new POSController(
-		        		frame,
-		        		new TotalService(),
-		        		new TaxService(),
-		        		new ReceiptArchiveService(),
-		        		new DiscountService(),
-		        		new ProductService(new ProductRepository())
-	    		);
+                ReceiptController receiptController = new ReceiptController(frame, totalService, taxService, discountService, productService);
+                CartController cartController = new CartController(frame, totalService, productService);
+                PaymentController paymentController = new PaymentController(frame, totalService, receiptArchiveService, receiptController, cartController);
+                ProductController productController = new ProductController(frame, productService, cartController);
+
+                // Not really referenced elsewhere so just creating the object is fine, since POSController
+                // wires up behavior upon construction for all events in frame
+                new POSController(frame, cartController, paymentController, receiptController, productController);
 		        LoginFrame login = new LoginFrame(frame);
 		        login.setVisible(true);
 		    });

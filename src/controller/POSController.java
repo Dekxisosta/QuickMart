@@ -1,6 +1,5 @@
 package controller;
 
-import service.*;
 import gui.frame.POSFrame;
 
 public class POSController {
@@ -11,23 +10,22 @@ public class POSController {
 
     public POSController(
             POSFrame view,
-            TotalService totalService,
-            TaxService taxService,
-            ReceiptArchiveService receiptArchiveService,
-            DiscountService discountService,
-            ProductService productService
+            CartController cartController,
+            PaymentController paymentController,
+            ReceiptController receiptController,
+            ProductController productController
     ) {
-        this.receiptController  = new ReceiptController(view, totalService, taxService, discountService, productService);
-        this.cartController     = new CartController(view, totalService, productService);
-        this.paymentController  = new PaymentController(view, totalService, receiptArchiveService, receiptController, cartController);
-        this.productController  = new ProductController(view, productService, cartController);
+        this.cartController     = cartController;
+        this.paymentController  = paymentController;
+        this.receiptController  = receiptController;
+        this.productController  = productController;
         initController(view);
     }
 
     private void initController(POSFrame view) {
-        view.getCartPanel().getQtyField().addActionListener(_ -> cartController.handleTextFieldEntry());
-        view.getCartPanel().getReceivedField().addActionListener(_ -> cartController.refreshTotals());
-        view.getCartPanel().getReceivedField().addKeyListener(new java.awt.event.KeyAdapter() {
+        view.cartPanel().getQtyField().addActionListener(_ -> cartController.handleTextFieldEntry());
+        view.cartPanel().getReceivedField().addActionListener(_ -> cartController.refreshTotals());
+        view.cartPanel().getReceivedField().addKeyListener(new java.awt.event.KeyAdapter() {
             @Override public void keyReleased(java.awt.event.KeyEvent e) { cartController.refreshTotals(); }
         });
 
@@ -42,7 +40,7 @@ public class POSController {
         view.getActionPanel().getPayBtn().addActionListener(_ -> paymentController.handlePayRequest());
 
         view.getTopPanel().getCategoryButtons().forEach(catBtn ->
-            catBtn.addActionListener(_ -> productController.displayCategory(catBtn.getText()))
+                catBtn.addActionListener(_ -> productController.displayCategory(catBtn.getText()))
         );
 
         productController.displayCategory("BEVERAGES");

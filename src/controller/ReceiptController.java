@@ -1,5 +1,6 @@
 package controller;
 
+import handler.*;
 import service.DiscountService;
 import service.ProductService;
 import service.TaxService;
@@ -9,7 +10,7 @@ import gui.frame.POSFrame;
 
 import javax.swing.table.DefaultTableModel;
 
-public class ReceiptController {
+public class ReceiptController implements ReceiptHandler {
     private final POSFrame view;
     private final TotalService totalService;
     private final TaxService taxService;
@@ -31,7 +32,7 @@ public class ReceiptController {
     }
 
     public void handlePrintRequest() {
-        DefaultTableModel model = view.getCartPanel().getTableModel();
+        DefaultTableModel model = view.cartPanel().getTableModel();
         if (model.getRowCount() == 0) {
             view.getDialogService().showMessage(view, "Cart is empty. Nothing to print.");
             return;
@@ -40,7 +41,7 @@ public class ReceiptController {
     }
 
     public String generateReceiptHtml(String transactionId) {
-        DefaultTableModel model = view.getCartPanel().getTableModel();
+        DefaultTableModel model = view.cartPanel().getTableModel();
         double totalDiscount = discountService.getTotalDiscount(model, productService);
         double cartTotal = totalService.getCartTotal(model);
         double subTotal = cartTotal + totalDiscount;

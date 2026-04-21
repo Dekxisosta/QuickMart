@@ -1,5 +1,6 @@
 package controller;
 
+import handler.*;
 import model.base.Product;
 import service.ProductService;
 import gui.frame.POSFrame;
@@ -10,12 +11,12 @@ import java.util.List;
 public class ProductController {
     private final POSFrame view;
     private final ProductService productService;
-    private final CartController cartController;
+    private final CartHandler cartHandler;
 
-    public ProductController(POSFrame view, ProductService productService, CartController cartController) {
+    public ProductController(POSFrame view, ProductService productService, CartHandler cartHandler) {
         this.view = view;
         this.productService = productService;
-        this.cartController = cartController;
+        this.cartHandler = cartHandler;
     }
 
     public void displayCategory(String category) {
@@ -32,7 +33,7 @@ public class ProductController {
                     view.getProductPanel().addProduct(p.getSimplifiedName(), p.getPrice(), i);
                 }
                 JButton pBtn = (JButton) grid.getComponent(i);
-                pBtn.addActionListener(_ -> cartController.addToCart(p));
+                pBtn.addActionListener(_ -> cartHandler.addToCart(p));
             }
         }
         view.getProductPanel().refreshGrid();
