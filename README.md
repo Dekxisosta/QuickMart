@@ -12,11 +12,11 @@
 
 ## Preview
 
-![Preview](assets/images/preview.gif)
+![Preview](docs/preview.gif)
 
 ## Screenshot
 
-![Screenshot](assets/images/preview.png)
+![Screenshot](docs/preview.png)
 
 ## UML Diagram
 
